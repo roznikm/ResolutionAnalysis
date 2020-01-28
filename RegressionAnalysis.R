@@ -16,6 +16,7 @@ regression_func = function(county_df) {
     mod <- lm(yield ~ I(Year - 2005) + NDVI + I(NDVI^2),data=county_df)
     x <- glance(mod)
     x$planted <- county_df$planted[1]
+    x$GEOID <- county_df$GEOID[1]
   return(x)
 }
 
