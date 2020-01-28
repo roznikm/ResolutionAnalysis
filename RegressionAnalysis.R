@@ -1,9 +1,12 @@
 library(tidyverse)
 library(broom)
 
-low <- read_csv('/Users/lysaporth/Rprojects/ResolutionPaper/MaxNDVIdfs/dfmaxndvi1kmSpringWheat.csv')
-med <- read_csv('/Users/lysaporth/Rprojects/ResolutionPaper/MaxNDVIdfs/dfmaxndvi500mSpringWheat.csv')
-high <- read_csv('/Users/lysaporth/Rprojects/ResolutionPaper/MaxNDVIdfs/dfmaxndvi250mSpringWheat.csv')
+low <- read_csv('/Users/lysaporth/Rprojects/ResolutionPaper/MaxNDVIdfs/dfmaxndvi1kmCorn.csv')
+low <- low %>% filter(planted > 1000)
+med <- read_csv('/Users/lysaporth/Rprojects/ResolutionPaper/MaxNDVIdfs/dfmaxndvi500mCorn.csv')
+med <- med %>% filter(planted > 1000)
+high <- read_csv('/Users/lysaporth/Rprojects/ResolutionPaper/MaxNDVIdfs/dfmaxndvi250mCorn.csv')
+high <- high %>% filter(planted > 1000)
 
 county_df_high <- group_split(high, GEOID)
 county_df_med <- group_split(med, GEOID)
@@ -18,16 +21,24 @@ regression_func = function(county_df) {
 
 low_results <- lapply(county_df_low, regression_func)
 low_results <- bind_rows(low_results)
-low_results <- low_results %>% filter(planted > 1000)
 
 medium_results <- lapply(county_df_med, regression_func)
 medium_results <- bind_rows(medium_results)
-medium_results <- medium_results %>% filter(planted > 1000)
 
 high_results <- lapply(county_df_high, regression_func)
 high_results <- bind_rows(high_results)
-high_results <- high_results %>% filter(planted > 1000)
 
 mean(low_results$r.squared)
 mean(medium_results$r.squared)
 mean(high_results$r.squared)
+
+# mod_low <- lm(yield ~ I(Year - 2005) + NDVI + I(NDVI^2) + as.factor(GEOID),data=low)
+# x <- summary(mod_low)
+# x$r.squared
+# mod_med <- lm(yield ~ I(Year - 2005) + NDVI + I(NDVI^2) + as.factor(GEOID),data=med)
+# y <- summary(mod_med)
+# y$r.squared
+# mod_high <- lm(yield ~ I(Year - 2005) + NDVI + I(NDVI^2) + as.factor(GEOID),data=high)
+# z <- summary(mod_high)
+# z$r.squared
+
