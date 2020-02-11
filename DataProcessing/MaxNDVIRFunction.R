@@ -1,7 +1,7 @@
 library('tidyverse')
 
-file_path_read <- '/Users/lysaporth/Rprojects/ResolutionPaper/NdviYieldPlantingDateData/df250mSpringWheat.csv'
-file_path_write <- '/Users/lysaporth/Rprojects/ResolutionPaper/MaxNDVIdfs/dfmaxndvi250mSpringWheat.csv'
+file_path_read <- '/Users/lysaporth/Rprojects/ResolutionPaper/NdviYieldPlantingDateData/df1kmWinterWheat.csv'
+file_path_write <- '/Users/lysaporth/Rprojects/ResolutionPaper/MaxNDVIdfs/dfmaxndvi1kmWinterWheat.csv'
 df <- read_csv(file_path_read)
 
 df$date <- as.Date(with(df, paste(Year, Month, Day,sep="-")), "%Y-%m-%d")
@@ -16,7 +16,7 @@ CalculateMaxNdvi = function(county_year){
 
 results <- map(years_geoid_df, CalculateMaxNdvi)
 results <- bind_rows(results)
-
+results <- results %>% drop_na()
 selected_counties <- results %>% 
   group_by(GEOID) %>% 
   summarise(n=n()) %>% filter(n==13)

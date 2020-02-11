@@ -1,12 +1,9 @@
 library(tidyverse)
 library(broom)
 
-low <- read_csv('/Users/lysaporth/Rprojects/ResolutionPaper/MaxNDVIdfs/dfmaxndvi1kmCorn.csv')
-low <- low %>% filter(planted > 1000)
-med <- read_csv('/Users/lysaporth/Rprojects/ResolutionPaper/MaxNDVIdfs/dfmaxndvi500mCorn.csv')
-med <- med %>% filter(planted > 1000)
-high <- read_csv('/Users/lysaporth/Rprojects/ResolutionPaper/MaxNDVIdfs/dfmaxndvi250mCorn.csv')
-high <- high %>% filter(planted > 1000)
+low <- read_csv('/Users/lysaporth/Rprojects/ResolutionPaper/MaxNDVIdfs/Clean_dfmaxndvi1kmCorn.csv')
+med <- read_csv('/Users/lysaporth/Rprojects/ResolutionPaper/MaxNDVIdfs/Clean_dfmaxndvi500mCorn.csv')
+high <- read_csv('/Users/lysaporth/Rprojects/ResolutionPaper/MaxNDVIdfs/Clean_dfmaxndvi250mCorn.csv')
 
 county_df_high <- group_split(high, GEOID)
 county_df_med <- group_split(med, GEOID)
@@ -33,6 +30,17 @@ mean(low_results$r.squared)
 mean(medium_results$r.squared)
 mean(high_results$r.squared)
 
+# Combine Results 
+low_res <- low_results %>% select(r.squared, GEOID)
+names(low_res) <- c('r2.1km', 'GEOID')
+med_res <- medium_results %>% select(r.squared, GEOID)
+names(med_res) <- c('r2.500m', 'GEOID')
+high_res <- high_results %>% select(r.squared, GEOID)
+names(high_res) <- c('r2.250m', 'GEOID')
+
+inter_df <- left_join(low_res, med_res)
+finished_df <- left_join(inter_df, high_res)
+write_csv(finished_df, "/Users/lysaporth/Rprojects/ResolutionPaper/RegressionResults/CornRegression.csv")
 # mod_low <- lm(yield ~ I(Year - 2005) + NDVI + I(NDVI^2) + as.factor(GEOID),data=low)
 # x <- summary(mod_low)
 # x$r.squared
